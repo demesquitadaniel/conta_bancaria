@@ -10,9 +10,9 @@ public class Conta {
     private Integer agencia;
     private String nomeDoCliente;
 
-    private Double saldo;
     // Para valores monetaris sempre utilizar BigDecimal (imutaveis)
     // Para fins didáticos, usaremos Double
+    private Double saldo;
 
 
     public Conta(Integer numero, Integer agencia, String nomeDoCliente) {

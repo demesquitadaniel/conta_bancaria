@@ -102,15 +102,20 @@ public class ContaServiceTest {
     @Test
     public void deveSerPossivelTransferirEntreContas() {
         // Dado
-        Conta contaSamir = new Conta(conta.getNumero(), conta.getAgencia(), "Samir");
-        Conta contaKassia = new Conta(conta.getNumero(), conta.getAgencia(), "Kassia");
+        Conta contaSamir =
+                new Conta(conta.getNumero(), conta.getAgencia(), "Samir");
+        Conta contaKassia =
+                new Conta(conta.getNumero(), conta.getAgencia(), "Kassia");
         contaService.depositar(contaSamir, 100.0);
+        contaService.depositar(contaKassia, 100.0);
+        Assert.assertEquals(contaSamir.getSaldo(), contaKassia.getSaldo());
 
         // Quando
         contaService.transferir(contaSamir, contaKassia, 49.99);
 
         // Então
-        Assert.assertEquals(contaSamir, contaSamir);
+        Assert.assertEquals(contaSamir.getAgencia(), contaSamir.getAgencia());
+        Assert.assertEquals(contaSamir.getNumero(), contaSamir.getNumero());
         Assert.assertSame(contaKassia, contaKassia);
         Assert.assertNotEquals(contaSamir.getSaldo(), contaKassia.getSaldo());
 
