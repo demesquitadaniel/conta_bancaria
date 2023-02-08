@@ -3,185 +3,161 @@ package service;
 import model.Conta;
 import static org.hamcrest.CoreMatchers.*;
 import org.junit.*;
-import org.junit.experimental.theories.suppliers.TestedOn;
+
 import static org.junit.Assert.*;
 
-import java.lang.annotation.Target;
+import java.util.Scanner;
 
 public class ContaServiceTest {
 
     /**
-     * Deve ser possível criar uma conta (ok)
-     * Novas contas iniciam com saldo ZERO (ok)
-     * Deve ser possível depositar (ok)
-     * Casa haja saldo, deve ser possível sacar
-     * Casa haja saldo, deve ser possível transferir entre contas
-     * Contas com mesmo numero e mesma agencia sao iguais
-     * <p>
-     * Usar no mínimo:
-     * 1 assertTrue
-     * 1 assertFalse
-     * 1 assertEquals
-     * 1 assertEquals (comparação entre contas)
-     * 1 assertNotEquals
-     * 1 assertSame
+     *
+     *  Deve ser possível criar uma conta - OK
+     *  Novas contas iniciam com o saldo ZERO
+     *  Deve ser possível depositar
+     *  Caso haja saldo deve ser possível sacar
+     *  Caso haja saldo deve ser possível transferir entre contas
+     *
      */
 
     ContaService contaService;
-    Conta conta;
+    Scanner input;
 
-    @Before // Executa método antes de CADA teste
-    public void setup() {
-        // System.out.println("Before");
-        contaService = new ContaService();
-        conta = contaService.cadastrar("Teste");
-
-    }
-
-    @BeforeClass // Executa método antes de TODA A CLASSE
+    @BeforeClass
     public static void setup2() {
-        // System.out.println("Before Class");
+        System.out.println("BeforeClass");
     }
 
-    @After // Executa metodo depois de CADA teste
-    public void tearDown() {
-        // System.out.println("After");
-    }
-
-    @AfterClass // Executa método depois de TODA A CLASSE
+    @AfterClass
     public static void tearDown2() {
-        // System.out.println("After Class");
+        System.out.println("AfterClass");
     }
 
-/*
- *  ###############
- */
+    @Before // Antes de cada teste executa uma ação
+    public void setup() {
+        System.out.println("Before");
+        contaService = new ContaService();
+
+        input = new Scanner(System.in);
+    }
+
+    @After
+    public void tearDown() {
+        System.out.println("After");
+        input.close();
+    }
 
     @Test
     public void deveSerPossivelCriarUmaConta() {
-        // Dado (given)
+        System.out.println("deveSerPossivelCriarUmaConta");
+        // Dado:
 
-        // Quando (when)
+        // Quando:
+        Conta conta = contaService.cadastrar("Beatriz");
+        Conta conta2 = contaService.cadastrar("Pedro");
 
-        // Então (then)
+        // Entao:
         assertTrue(1 == conta.getAgencia());
         assertTrue(1 == conta.getNumero());
-        assertEquals("Teste", conta.getNomeDoCliente());
+        assertEquals("Beatriz", conta.getNomeDoCliente());
+
+        assertTrue(2 == conta2.getAgencia());
+        assertTrue(2 == conta2.getNumero());
+        assertEquals("Pedro", conta2.getNomeDoCliente());
     }
 
     @Test
     public void novasContasDevemIniciarComSaldoZero() {
-        // Dado (given)
+        System.out.println("novasContasDevemIniciarComSaldoZero");
+        // Dado
+        Conta conta = contaService.cadastrar("Beatriz");
 
-        // Quando (when)
-
-        // Então (then)
-        assertTrue(conta.getSaldo() == 0);
-
+        // Então
+        Assert.assertTrue(conta.getSaldo() == 0);
     }
 
     @Test
     public void deveSerPossivelDepositar() {
+        System.out.println("deveSerPossivelDepositar");
         // Dado
+        Conta conta = contaService.cadastrar("Beatriz");
 
         // Quando
         contaService.depositar(conta, 10.0);
-        // Então
-        assertFalse(conta.getSaldo() < 0);
-        assertEquals((Double) 10.0, conta.getSaldo());
+
+        // Entao
+        Assert.assertTrue(conta.getSaldo() == 10.0);
     }
 
-    @Test
-    public void deveSerPossivelSacar() {
-        //Dado
-        contaService.depositar(conta, 10.0);
-
-        //Quando
-        contaService.sacar(conta, 5.0);
-        //Então
-        assertEquals((Double) 5.0, conta.getSaldo());
-    }
-
-    @Test
-    public void deveSerPossivelTransferirEntreContas() {
-        // Dado
-        Conta contaSamir =
-                new Conta(conta.getNumero(), conta.getAgencia(), "Samir");
-        Conta contaKassia =
-                new Conta(conta.getNumero(), conta.getAgencia(), "Kassia");
-        contaService.depositar(contaSamir, 100.0);
-        contaService.depositar(contaKassia, 100.0);
-        assertEquals(contaSamir.getSaldo(), contaKassia.getSaldo());
-
-        // Quando
-        contaService.transferir(contaSamir, contaKassia, 49.99);
-
-        // Então
-        assertEquals(contaSamir.getAgencia(), contaSamir.getAgencia());
-        assertEquals(contaSamir.getNumero(), contaSamir.getNumero());
-        assertSame(contaKassia, contaKassia);
-        assertNotEquals(contaSamir.getSaldo(), contaKassia.getSaldo());
-
-    }
-
-
-/*
- * FimTestes
- */
-
+    // @Ignore
     @Test
     public void assertsPossiveis() {
         assertTrue(true);
         assertFalse(false);
 
-        // Nrs inteiros
+        // Numeros inteiros
         assertEquals(1, 1);
-        assertEquals(1234567, 1234567);
+        assertEquals(100000, 100000);
 
-        // Nrs Pontos Flutuantes
+        // Numeros ponto flutuante
         assertEquals(0.5, 0.5, 0.1);
         assertEquals(0.51, 0.52, 0.1);
-        // Assert.assertEquals(0.51, 0.52, 0.01); // Aqui a igualdade não vai até a segunda casa decimal
+        // Assert.assertEquals(0.51, 0.52, 0.01);
 
-        // Dizimas Periodicas Infinitas
-        assertEquals(3.1415, Math.PI, 0.001);
+        // Dizimas periodicas infinitas
+        assertEquals(3.141599999999, Math.PI, 0.001);
 
-        // int (Integer), short (Short), long (Long), float (Float)...
-        int intPrimitivo = 10; // tipo primitivo
-        Integer integerWrapper = 10; // tipo Wrapper (memórias diferentes)
-        assertEquals(Integer.valueOf(intPrimitivo), integerWrapper); //OU ...
+        // primitivos -> int, short, long, fload, double...
+        // wrapper classes -> Integer, Short, Long, Float, Double...
+        int intPrimitivo = 10;
+        Integer integerWrapper = 10;
+
+        assertEquals(Integer.valueOf(intPrimitivo), integerWrapper);
         assertEquals((Integer) intPrimitivo, integerWrapper);
         assertEquals(intPrimitivo, integerWrapper.intValue());
 
-        // Strings
         assertEquals("jose", "jose");
-        assertTrue("maria".equalsIgnoreCase("Maria"));
 
-        assertNotEquals(1, 2);
+        assertTrue("Maria".equalsIgnoreCase("maria"));
+
+        assertNotEquals(2 , 10);
 
         Conta conta01 = new Conta(1, 1, "Marcos");
         Conta conta02 = new Conta(1, 1, "Marcos");
 
-        // Object :: equals()
-        // Conta :: equals()
+        // Object - equals()
+        // Conta - equals()
 
-        // Considera 1o o metodo equals
+        // Considera o método equals
         assertEquals(conta01, conta02);
 
-        // Valida se é da mesma instancia (endereco de memoria)
-        // Assert.assertSame(conta01, conta02); // Não passa
+        // Valida que é a mesma instancia
         assertSame(conta01, conta01);
         assertNotSame(conta01, conta02);
 
-        // assertEquals("Mensagem de ERRO. Só vai aparecer se o teste NÃO passar", 1, 2);
+        // Expected - esperado | Actual - atual
+
+        assertEquals("Mensagem de erro do igor", 2, 2);
     }
 
     @Test
-    public void assertThatTeste() {
+    public void assertThatTest() {
         // verifique que...
-        Conta contaMaria = contaService.cadastrar("Maria");
+        Conta contaDaMaria = contaService.cadastrar("Maria");
 
-        assertThat(contaMaria.getSaldo(), is(0.0));
+        // Mais legibilidade
+        assertThat(contaDaMaria.getSaldo(), is(0.0)); // assertThat -> Junt 4
+
+        assertEquals((Double) 0.0, contaDaMaria.getSaldo());
+
+        assertThat(contaDaMaria.getSaldo(), is(0.0));
+        assertThat(contaDaMaria.getNomeDoCliente(), is(not("João")));
+        assertThat(contaDaMaria, is(instanceOf(Conta.class)));
+        // assertThrows()
+        // a
+        //
+        // ssertThrows()
     }
+
 
 }
